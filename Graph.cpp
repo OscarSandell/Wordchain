@@ -13,6 +13,14 @@ struct Graph
         std::vector<Node *> Adj_List;
     };
     Graph():Node_List{}{}
+    ~Graph()
+    {
+        for (auto &&i : Node_List)
+        {
+            delete i;
+        }
+        
+    }
     void Find_Shortest(const std::string &from, const std::string &to);
     //Find_Longest
     std::vector<Node *> Node_List;
@@ -57,7 +65,7 @@ int main()
     Graph graph{};
     read_file(graph);
 
-    /*for (auto a : graph.Node_List)
+    for (auto a : graph.Node_List)
     {
         std::cout << "Utgår ifrån : " << a->value << std::endl ;
         for (size_t i = 0; i < a->Adj_List.size(); i++)
@@ -65,5 +73,5 @@ int main()
             std::cout << a->Adj_List[i]->value << " ";
         }
         std::cout << std::endl;
-    }*/
+    }
 }
