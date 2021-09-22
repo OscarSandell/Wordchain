@@ -158,33 +158,6 @@ void Graph::insert(const std::string &valuep)
     }
 }
 
-
-
-/*
-int main()
-{
-    Graph graph{};
-    read_file(graph);
-
-    graph.ISS("aula");
-
-    std::vector<Graph::Node *> path = graph.Dijkstra("aula", "jama");
-    if (path.size() > 0)
-    {
-        for (auto it = std::make_reverse_iterator(path.end()); it != std::make_reverse_iterator(path.begin()); it++)
-        {
-            if(it != std::make_reverse_iterator(path.begin()+1))
-            {
-                std::cout << (*it)->value << "-->";
-            }
-            else
-                std::cout << (*it)->value << std::endl;
-        }
-    }
-    else
-    std::cout << "No Path! mofo" << std::endl;
-}
-*/
 /**
  * Läs in ordlistan och returnera den som en vector av orden. Funktionen läser även bort raden med
  * #-tecknet så att resterande kod inte behöver hantera det.
