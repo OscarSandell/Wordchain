@@ -202,21 +202,6 @@ int main()
         std::cout << "det fans ej en väg" << std::endl;
     }
     std::vector<std::string> path = graph.Find_Shortest("aula","jama");
-    for (auto &&i : path)
-    {
-        std::cout << i << "-->";
-    }
-    /*std::cout << std::endl;
-     for (auto a : graph.Node_List)
-    {
-        std::cout << "Node : " << a->value << " Har distance = "<< a->distance << std::endl ;
-        std::cout << std::endl;
-    }
-    std::cout << "Longest_path to jama is :" << std::endl;
-    auto newpath = graph.Find_Longest("aula");
-    for (auto &&i : newpath)
-    {
-        std::cout << i << "-->";
-    }*/
+    std::cout << " Kortaste vägen är " << path.size() << std::endl;
 
 }
