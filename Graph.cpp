@@ -31,13 +31,14 @@ struct Graph
         }
     }
 
-    std::vector<std::string> Find_Shortest(const std::string &from, const std::string &to);
+    std::vector<std::string> Find_Shortest(const std::string &, const std::string &);
     std::vector<std::string> Find_Longest(std::string const &);
-    std::vector<Node *> Dijkstra(std::string const &from, std::string const &);
+    std::vector<Node*> Dijkstra(std::string const &, std::string const &);
+    std::vector<Node*> BFS(std::string const &);
     void ISS(const std::string &);
     Node *find(std::string const &);
     std::vector<Node *> Node_List;
-    void insert(const std::string &valuep);
+    void insert(const std::string &;
 };
 
 void Graph::ISS(std::string const &first)
@@ -117,6 +118,12 @@ std::vector<Graph::Node *> Graph::Dijkstra(std::string const &from, std::string 
         }
     }
     return path;
+}
+
+std::vector<Graph::Node *> Graph::BFS(std::string const &from)
+{
+    ISS(from);
+    
 }
 
 std::vector<std::string> Graph::Find_Shortest(const std::string &from, const std::string &to)
