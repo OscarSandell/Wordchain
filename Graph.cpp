@@ -4,18 +4,16 @@
 #include <queue>
 #include <algorithm>
 #include <stack>
+#include <iterator>
 
 struct Graph
 {
     struct Node
     {
-        /*struct Edge
-        {
-            Edge(const std::string & to,int weightp):weight{}
-            int weight;
-            std::string name_of_node_we_go_to;
-        };*/
+      
         Node(const std::string &s) : value{s}, Adj_List{}, weight{1}, distance{-1}, prev{nullptr}, visited{false} {}
+        Node(const Node &);
+        Node operator=(const Node &);
         std::string value;
         std::vector<Node *> Adj_List;
         int weight;
@@ -121,6 +119,23 @@ std::vector<Graph::Node *> Graph::Dijkstra(std::string const &from, std::string 
     return path;
 }
 
+std::vector<std::string> Graph::Find_Shortest(const std::string &from, const std::string &to)
+{
+    ISS(from);
+    std::vector<Graph::Node *> path = Dijkstra(from, to);
+    std::vector<std::string> wordChain{};
+    for (auto it = std::make_reverse_iterator(path.end()); it != std::make_reverse_iterator(path.begin()); it++)
+    {
+        wordChain.push_back((*it)->value);
+    }
+    return wordChain;
+}
+
+std::vector<std::string> Graph::Find_Longest(std::string const & a)
+{
+    std::cout << "Implementera denna " << std::endl;
+}
+
 void Graph::insert(const std::string &valuep)
 {
     Node *node{new Node{valuep}};
@@ -143,17 +158,9 @@ void Graph::insert(const std::string &valuep)
     }
 }
 
-void read_file(Graph &graph)
-{
-    std::string line;
-    while (std::getline(std::cin, line))
-    {
-        if (line == "#")
-            break;
-        graph.insert(line);
-    }
-}
 
+
+/*
 int main()
 {
     Graph graph{};
@@ -177,48 +184,66 @@ int main()
     else
     std::cout << "No Path! mofo" << std::endl;
 }
-
+*/
 /**
  * Läs in ordlistan och returnera den som en vector av orden. Funktionen läser även bort raden med
  * #-tecknet så att resterande kod inte behöver hantera det.
  */
-Dictionary read_dictionary() {
-    string line;
-    vector<string> result;
-    while (std::getline(std::cin, line)) {
+void read_file(Graph &graph)
+{
+    std::string line;
+    while (std::getline(std::cin, line))
+    {
+        if (line == "#")
+            break;
+        graph.insert(line);
+    }
+}
+Graph read_dictionary()
+{
+    std::string line;
+    //std::vector<std::string> result;
+    Graph Temp{};
+    while (std::getline(std::cin, line))
+    {
         if (line == "#")
             break;
 
-        result.push_back(line);
+        Temp.insert(line);
     }
-
-    return Dictionary(result.begin(), result.end());
+    return Temp;
+    //return std::vector<std::string>(result.begin(), result.end());
 }
 
 /**
  * Skriv ut en ordkedja på en rad.
  */
-void print_chain(const vector<string> &chain) {
+void print_chain(const std::vector<std::string> &chain)
+{
     if (chain.empty())
         return;
 
-    vector<string>::const_iterator i = chain.begin();
-    cout << *i;
+    std::vector<std::string>::const_iterator i = chain.begin();
+    std::cout << *i;
 
     for (++i; i != chain.end(); ++i)
-        cout << " -> " << *i;
+        std::cout << " -> " << *i;
 
-    cout << endl;
+    std::cout << std::endl;
 }
 
 /**
  * Skriv ut ": X ord" och sedan en ordkedja om det behövs. Om ordkedjan är tom, skriv "ingen lösning".
  */
-void print_answer(const vector<string> &chain) {
-    if (chain.empty()) {
-        cout << "ingen lösning" << endl;
-    } else {
-        cout << chain.size() << " ord" << endl;
+void print_answer(const std::vector<std::string> &chain)
+{
+    if (chain.empty())
+    {
+        std::cout << "ingen lösning" << std::endl;
+    }
+    else
+    {
+        std::cout << chain.size() << " ord" << std::endl;
         print_chain(chain);
     }
 }
@@ -226,29 +251,37 @@ void print_answer(const vector<string> &chain) {
 /**
  * Läs in alla frågor. Anropar funktionerna "find_shortest" eller "find_longest" ovan när en fråga hittas.
  */
-void read_questions(const Dictionary &dict) {
-    string line;
-    while (std::getline(std::cin, line)) {
+void read_questions(Graph &graph)
+{
+
+    std::string line;
+    while (std::getline(std::cin, line))
+    {
         size_t space = line.find(' ');
-        if (space != string::npos) {
-            string first = line.substr(0, space);
-            string second = line.substr(space + 1);
-            vector<string> chain = find_shortest(dict, first, second);
+        if (space != std::string::npos)
+        { //find shortest path
+            std::string first = line.substr(0, space);
+            std::string second = line.substr(space + 1);
+            std::vector<std::string> path = graph.Find_Shortest(first, second);
 
-            cout << first << " " << second << ": ";
-            print_answer(chain);
-        } else {
-            vector<string> chain = find_longest(dict, line);
+            std::cout << first << " " << second << ": ";
+            print_answer(path);
+        }
+        else
+        { //find longest path
+            std::vector<std::string> chain = graph.Find_Longest(line);
 
-            cout << line << ": ";
+            std::cout << line << ": ";
             print_answer(chain);
         }
     }
 }
 
-int main() {
-    Dictionary dict = read_dictionary();
-    read_questions(dict);
-
+int main()
+{
+    //std::vector<std::string> dict = read_dictionary();
+    Graph graph = read_dictionary();
+    //read_questions(dict);
+    read_questions(graph);
     return 0;
 }
