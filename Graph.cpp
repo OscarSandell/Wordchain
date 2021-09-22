@@ -34,6 +34,7 @@ struct Graph
     }
 
     std::vector<std::string> Find_Shortest(const std::string &from, const std::string &to);
+    std::vector<std::string> Find_Longest(std::string const &);
     bool Dijkstra(std::string const & from,std::string const &);
     void ISS(const std::string &);
     Node* find(std::string const &);
@@ -51,7 +52,7 @@ void Graph::ISS(std::string const & first)
         }
         else
         {
-            i->distance = 100000000;
+            i->distance = -1;
         }
         i->prev = nullptr;
         i->visited = false;
@@ -70,9 +71,10 @@ Graph::Node* Graph::find(std::string const & target)
     return *result;
 }
 
-/*
+
 bool distance_comparison(Graph::Node*a,Graph::Node* b)
 {
+    //return vänster +1 < höger
     if(a->distance +1 > 0 && b->distance == -1)
     {
         return true;
@@ -81,7 +83,7 @@ bool distance_comparison(Graph::Node*a,Graph::Node* b)
     {
         return false;
     }
-}*/
+}
 
 
 bool Graph::Dijkstra(std::string const & from, std::string const & to)
@@ -98,17 +100,16 @@ bool Graph::Dijkstra(std::string const & from, std::string const & to)
         
         for(auto n : current->Adj_List)
         {
-            if(current->distance +1 < n->distance)
-            //if(distance_comparison(current,n))
+            if(current->distance +1 < n->distance || n->distance == -1 )
             {
                 n->distance = current->distance + 1;
                 n->prev = current;
             }
             queue.push(n);
         }
-        if(current->value == to) return true; 
+        //if(current->value == to) return true; 
     }
-    return false;
+    //return false;
 }
 
 void Graph::insert(const std::string &valuep)
@@ -165,6 +166,12 @@ std::vector<std::string> Graph::Find_Shortest(std::string const & from,std::stri
 
 }
 
+
+std::vector<std::string> Graph::Find_Longest(std::string const & to)
+{
+
+}
+
 int main()
 {
     Graph graph{};
@@ -199,5 +206,17 @@ int main()
     {
         std::cout << i << "-->";
     }
-    std::cout << std::endl;
+    /*std::cout << std::endl;
+     for (auto a : graph.Node_List)
+    {
+        std::cout << "Node : " << a->value << " Har distance = "<< a->distance << std::endl ;
+        std::cout << std::endl;
+    }
+    std::cout << "Longest_path to jama is :" << std::endl;
+    auto newpath = graph.Find_Longest("aula");
+    for (auto &&i : newpath)
+    {
+        std::cout << i << "-->";
+    }*/
+
 }
