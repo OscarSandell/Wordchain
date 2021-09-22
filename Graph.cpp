@@ -1,17 +1,29 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <queue>
+#include <algorithm>
+#include <stack>
 
 struct Graph
 {
     struct Node
     {
-        Node(const std::string &s) : value{s}, Adj_List{}
+        /*struct Edge
         {
-        }
+            Edge(const std::string & to,int weightp):weight{}
+            int weight;
+            std::string name_of_node_we_go_to;
+        };*/
+        Node(const std::string &s) : value{s}, Adj_List{},weight{1},distance{-1},prev{nullptr},visited{false}{}
         std::string value;
         std::vector<Node *> Adj_List;
+        int weight;
+        int distance;
+        Node* prev;
+        bool visited;
     };
+
     Graph():Node_List{}{}
     ~Graph()
     {
@@ -19,13 +31,85 @@ struct Graph
         {
             delete i;
         }
-        
     }
-    void Find_Shortest(const std::string &from, const std::string &to);
-    //Find_Longest
+
+    std::vector<std::string> Find_Shortest(const std::string &from, const std::string &to);
+    bool Dijkstra(std::string const & from,std::string const &);
+    void ISS(const std::string &);
+    Node* find(std::string const &);
     std::vector<Node *> Node_List;
     void insert(const std::string &valuep);
 };
+
+void Graph::ISS(std::string const & first)
+{
+    for (auto &&i : Node_List)
+    {
+        if(i->value == first)
+        {
+            i->distance = 0;
+        }
+        else
+        {
+            i->distance = 100000000;
+        }
+        i->prev = nullptr;
+        i->visited = false;
+    }
+    
+}
+
+Graph::Node* Graph::find(std::string const & target)
+{
+    auto result = std::find_if(Node_List.begin(),Node_List.end(),[&target](Node* node){return node->value == target;});
+    if(result == Node_List.end())
+    {
+        std::cout << "No such node" << std::endl;
+        return nullptr;
+    }
+    return *result;
+}
+
+/*
+bool distance_comparison(Graph::Node*a,Graph::Node* b)
+{
+    if(a->distance +1 > 0 && b->distance == -1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}*/
+
+
+bool Graph::Dijkstra(std::string const & from, std::string const & to)
+{
+    auto lambda= [](Node*a,Node*b){return a->distance > b->distance;};
+    std::priority_queue<Node*,std::vector<Node*>,decltype(lambda)> queue(lambda);
+    queue.push(find(from));
+    while(!queue.empty())
+    {
+        Node* current = queue.top();
+        queue.pop();
+        if(current->visited) continue;
+        current->visited = true;
+        
+        for(auto n : current->Adj_List)
+        {
+            if(current->distance +1 < n->distance)
+            //if(distance_comparison(current,n))
+            {
+                n->distance = current->distance + 1;
+                n->prev = current;
+            }
+            queue.push(n);
+        }
+        if(current->value == to) return true; 
+    }
+    return false;
+}
 
 void Graph::insert(const std::string &valuep)
 {
@@ -60,6 +144,27 @@ void read_file(Graph &graph)
     }
 }
 
+std::vector<std::string> Graph::Find_Shortest(std::string const & from,std::string const & to)
+{
+    Node* f = find(from);
+    Node* t = find(to);
+    std::stack<Node*>nodes{};
+    while(t != f->prev)
+    {
+        nodes.push(t);
+        std::cout << "T value " << t->value << " t->prev " << t->prev << std::endl; 
+        t = t->prev;
+    }
+    std::vector<std::string> node_values{};
+    while(!nodes.empty())
+    {
+        node_values.push_back(nodes.top()->value);
+        nodes.pop();
+    }
+    return node_values;
+
+}
+
 int main()
 {
     Graph graph{};
@@ -74,4 +179,25 @@ int main()
         }
         std::cout << std::endl;
     }
+    graph.ISS("aula");
+    for (auto a : graph.Node_List)
+    {
+        std::cout << "Node : " << a->value << " Har distance = "<< a->distance << std::endl ;
+        std::cout << std::endl;
+    }
+    bool test = graph.Dijkstra("aula","jama");
+    if(test)
+    {
+        std::cout << "Det fanns en väg" << std::endl;
+    }
+    else
+    {
+        std::cout << "det fans ej en väg" << std::endl;
+    }
+    std::vector<std::string> path = graph.Find_Shortest("aula","jama");
+    for (auto &&i : path)
+    {
+        std::cout << i << "-->";
+    }
+    std::cout << std::endl;
 }
