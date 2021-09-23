@@ -22,13 +22,11 @@ struct Node
     Node *prev;
     bool visited;
 };
-
+/*
 std::vector<std::string> Find_Shortest(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
 {
     std::unordered_map<std::string, std::string> visited{};
-   /* auto lambda = [](Node *a, Node *b)
-    { return a->distance > b->distance; };
-    std::priority_queue<Node *, std::vector<Node *>, decltype(lambda)> queue(lambda);*/
+ 
     std::queue<std::string> queue {};
     queue.push(from);
     std::vector<std::string> path{};
@@ -39,19 +37,13 @@ std::vector<std::string> Find_Shortest(std::string const &from, std::string cons
         std::string current = queue.front();
         queue.pop();
         auto V = visited.find(current);
-        if (V != visited.end())
+        if (V != visited.end() )
             continue;
         //current->visited = true;
         
         //visited[current] = "";
         if (current == to)
         {
-            /*while(current != from)
-            {
-                std::cout << "HEJ" << std::endl;
-                path.push_back(current);
-                current = visited[current];
-            }*/
             while(current != "")
             {
                 std::cout << "HEJ" << std::endl;
@@ -84,12 +76,59 @@ std::vector<std::string> Find_Shortest(std::string const &from, std::string cons
                 }
             }
             temp = current;
+        }  
+    }
+    return path;
+}*/
+
+//Denna funkar, 
+
+std::vector<std::string> Find_Shortest(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
+{
+    std::unordered_map<std::string, std::string> visited{};
+    std::queue<std::string> queue{};
+    queue.push(from);
+    std::vector<std::string> path{};
+    visited[from] = "";
+    while (!queue.empty())
+    {
+        std::string current{queue.front()};
+        queue.pop();
+        std::string temp{current};
+        for (auto &&i : temp)
+        {
+            for (i = 'a'; i < 'z' + 1; ++i)
+            {
+                if (temp != current)
+                {
+                    auto it = set.find(temp);
+                    if (it != set.end())
+                    {
+                        auto goal = visited.find(temp);
+                        if (goal == visited.end())
+                        {
+                            visited[temp] = current;
+                            if (temp == to)
+                            {
+                                    queue.push(temp);
+                                    while (temp != from)
+                                    {
+                                        path.push_back(temp);
+                                        temp = visited[temp];
+                                    }
+                                    path.push_back(temp);
+                                    return path;
+                            }
+                        }
+                        queue.push(temp);
+                    }
+                }
+            }
+            temp = current;
         }
-        
     }
     return path;
 }
-
 
 std::vector<std::string> Find_Longest(std::string const &from, std::unordered_set<std::string> &set)
 {
