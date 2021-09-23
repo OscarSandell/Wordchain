@@ -8,80 +8,7 @@
 #include <unordered_set>
 #include <unordered_map>
 
-struct Node
-{
-
-    Node(const std::string &s) : value{s}, Adj_List{}, weight{1}, distance{-1}, prev{nullptr}, visited{false} {}
-    Node(const std::string &s, Node *node) : value{s}, Adj_List{}, weight{1}, distance{-1}, prev{node}, visited{false} {}
-    Node(const Node &);
-    Node operator=(const Node &);
-    std::string value;
-    std::vector<Node *> Adj_List;
-    int weight;
-    int distance;
-    Node *prev;
-    bool visited;
-};
-/*
-std::vector<std::string> Find_Shortest(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
-{
-    std::unordered_map<std::string, std::string> visited{};
- 
-    std::queue<std::string> queue {};
-    queue.push(from);
-    std::vector<std::string> path{};
-    visited[from] = "";
-    while (!queue.empty())
-    {
-        std::cout << "Kön är: " << queue.size() << std::endl;
-        std::string current = queue.front();
-        queue.pop();
-        auto V = visited.find(current);
-        if (V != visited.end() )
-            continue;
-        //current->visited = true;
-        
-        //visited[current] = "";
-        if (current == to)
-        {
-            while(current != "")
-            {
-                std::cout << "HEJ" << std::endl;
-                path.push_back(visited[current]);
-                current = visited[current];
-            }
-            
-            path.push_back(current);
-            return path;
-        }
-        
-
-        std::string temp{current};
-        for (auto &&i : temp)
-        {
-            for (i = 'a'; i < 'z' + 1; ++i)
-            {
-                if (temp != current)
-                {
-                    auto it = set.find(temp);
-                    if (it != set.end())
-                    {
-                        auto goal = visited.find(temp);
-                        if (goal != visited.end())
-                        {   
-                            visited[temp]=current;
-                        }
-                            queue.push(temp);
-                    }
-                }
-            }
-            temp = current;
-        }  
-    }
-    return path;
-}*/
-
-//Denna funkar, 
+//Denna funkar,
 
 std::vector<std::string> Find_Shortest(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
 {
@@ -101,26 +28,25 @@ std::vector<std::string> Find_Shortest(std::string const &from, std::string cons
             {
                 if (temp != current)
                 {
-                    auto it = set.find(temp);
-                    if (it != set.end())
+                    auto goal = visited.find(temp);
+                    if (goal == visited.end())
                     {
-                        auto goal = visited.find(temp);
-                        if (goal == visited.end())
+                        auto it = set.find(temp);
+                        if (it != set.end())
                         {
                             visited[temp] = current;
                             if (temp == to)
                             {
-                                    queue.push(temp);
-                                    while (temp != from)
-                                    {
-                                        path.push_back(temp);
-                                        temp = visited[temp];
-                                    }
+                                while (temp != from)
+                                {
                                     path.push_back(temp);
-                                    return path;
+                                    temp = visited[temp];
+                                }
+                                path.push_back(temp);
+                                return path;
                             }
+                            queue.push(temp);
                         }
-                        queue.push(temp);
                     }
                 }
             }
@@ -132,115 +58,123 @@ std::vector<std::string> Find_Shortest(std::string const &from, std::string cons
 
 std::vector<std::string> Find_Longest(std::string const &from, std::unordered_set<std::string> &set)
 {
-    auto lambda = [](Node *a, Node *b)
-    { return a->distance > b->distance; };
-    std::priority_queue<Node *, std::vector<Node *>, decltype(lambda)> queue(lambda);
+    std::unordered_map<std::string, std::string> visited{};
+    std::queue<std::string> queue{};
+    queue.push(from);
     std::vector<std::string> path{};
-    Node *last{nullptr};
-    queue.push(new Node(from));
+    visited[from] = "";
+    std::string last{};
     while (!queue.empty())
     {
-        Node *current = queue.top();
-        last = current;
+        std::string current{queue.front()};
         queue.pop();
-        /* if (current->visited)
-            continue; */
-
-        current->visited = true;
-
-        std::string temp{current->value};
-        for (auto &&i : temp)
+        last = current;
+        std::string temp{current};
+        for (auto &i : temp)
         {
             for (i = 'a'; i < 'z' + 1; ++i)
             {
-                if (temp != current->value)
+                if (temp != current)
                 {
-                    auto it = set.find(temp);
-                    if (it != set.end())
+                    auto goal = visited.find(temp);
+                    if (goal == visited.end())
                     {
-                        Node *n = new Node(temp);
-                        if (current->distance + 1 < n->distance || n->distance == -1)
+                        auto it = set.find(temp);
+                        if (it != set.end())
                         {
-                            n->distance = current->distance + 1;
-                            n->prev = current;
+                            visited[temp] = current;
+                            queue.push(temp);
                         }
-                        queue.push(n);
                     }
                 }
             }
-            temp = current->value;
+            temp = current;
         }
     }
-    path.push_back(last->value);
-    while (last->prev != nullptr)
+
+ 
+    std::cout << "Letat igenom alla noder" << std::endl;
+    while (last != from)
     {
-        path.push_back(last->prev->value);
-        last = last->prev;
+        path.push_back(last);
+        last = visited[last];
     }
+    path.push_back(last);
     return path;
 }
 
-//unordered_set<std::string>
-/*
-std::vector<Graph::Node *> Graph::BFS(std::string const &from)
+std::vector<std::string> Find_Path(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
 {
-    std::queue<Node *> queue{};
-    Node *last{nullptr};
-    Node *start{find(from)};
-    queue.push(start);
-    start->visited = true;
-    Node *current{nullptr};
+    std::unordered_map<std::string, std::string> visited{};
+    std::queue<std::string> queue{};
+    queue.push(from);
+    std::vector<std::string> path{};
+    visited[from] = "";
+    std::string last{};
     while (!queue.empty())
     {
-        current = queue.front();
-        last = current;
+        std::string current{queue.front()};
         queue.pop();
-
-        
-        for (auto &&i : current->Adj_List)
+        last = current;
+        std::string temp{current};
+        for (auto &i : temp)
         {
-            if (!i->visited)
+            for (i = 'a'; i < 'z' + 1; ++i)
             {
-                queue.push(i);
-                i->distance = current->distance + 1;
-                i->prev = current;
-                i->visited = true;
+                if (temp != current)
+                {
+                    auto goal = visited.find(temp);
+                    if (goal == visited.end())
+                    {
+                        auto it = set.find(temp);
+                        if (it != set.end())
+                        {
+                            //iffa här
+                            visited[temp] = current;
+                            if (to != "" && temp == to)
+                            {
+                                while (temp != from)
+                                {
+                                    path.push_back(temp);
+                                    temp = visited[temp];
+                                }
+                                path.push_back(temp);
+                                return path;
+                            }
+                            queue.push(temp);
+                        }
+                    }
+                    /*auto goal = visited.find(temp);
+                    if (goal == visited.end())
+                    {
+                        auto it = set.find(temp);
+                        if (it != set.end())
+                        {
+                            visited[temp] = current;
+                            
+                            queue.push(temp);
+                        }
+                    }*/
+                }
             }
+            temp = current;
         }
     }
-    std::vector<Node *> path{};
-    path.push_back(last);
-    while (last->prev != nullptr)
+
+ 
+    if (to == "")
     {
-        path.push_back(last->prev);
-        last = last->prev;
+        std::cout << "Letat igenom alla noder" << std::endl;
+        while (last != from)
+        {
+            path.push_back(last);
+            last = visited[last];
+        }
+        path.push_back(last);
+        return path;
     }
     return path;
 }
-*/
-/* std::vector<std::string> Find_Shortest(const std::string &from, const std::string &to, std::unordered_set<std::string> &set)
-{
-    std::vector<std::string> wordChain = Dijkstra(from, to, set);
-    //std::vector<std::string> wordChain{};
-    for (auto it = std::make_reverse_iterator(path.end()); it != std::make_reverse_iterator(path.begin()); it++)
-    {
-        wordChain.push_back((*it)->value);
-    }
-    return wordChain;
-} */
-
-/*
-std::vector<std::string> Graph::Find_Longest(std::string const &from)
-{
-    ISS(from);
-    std::vector<Graph::Node *> path = BFS(from);
-    std::vector<std::string> wordChain{};
-    for (auto &&i : path)
-    {
-        wordChain.push_back(i->value);
-    }
-    return wordChain;
-}*/
 
 /**
  * Läs in ordlistan och returnera den som en vector av orden. Funktionen läser även bort raden med
@@ -261,16 +195,21 @@ void read_dictionary(std::unordered_set<std::string> &set)
 /**
  * Skriv ut en ordkedja på en rad.
  */
-void print_chain(const std::vector<std::string> &chain)
+template<typename iterator>
+//void print_chain(const std::vector<std::string> &chain)
+void print_chain(iterator begin,iterator end)
 {
-    if (chain.empty())
+    //if (chain.empty())
+    if(begin == end)
         return;
 
-    std::vector<std::string>::const_iterator i = chain.begin();
-    std::cout << *i;
-
-    for (++i; i != chain.end(); ++i)
-        std::cout << " -> " << *i;
+   // std::vector<std::string>::const_iterator i = chain.begin();
+    //std::cout << *i;
+    std::cout << *begin;
+    //for (++i; i != chain.end(); ++i)
+     //   std::cout << " -> " << *i;
+    for (++begin; begin != end; ++begin)
+        std::cout << " -> " << *begin;
 
     std::cout << std::endl;
 }
@@ -278,16 +217,22 @@ void print_chain(const std::vector<std::string> &chain)
 /**
  * Skriv ut ": X ord" och sedan en ordkedja om det behövs. Om ordkedjan är tom, skriv "ingen lösning".
  */
-void print_answer(const std::vector<std::string> &chain)
+template<typename iterator>
+//void print_answer(const std::vector<std::string> &chain)
+void print_answer(iterator begin,iterator end,size_t i)
+
 {
-    if (chain.empty())
+    //f (chain.empty())
+     if(begin == end)
     {
         std::cout << "ingen lösning" << std::endl;
     }
     else
     {
-        std::cout << chain.size() << " ord" << std::endl;
-        print_chain(chain);
+        //std::cout << chain.size() << " ord" << std::endl;
+        std::cout << i << " ord" << std::endl;
+        //print_chain(chain);
+        print_chain(begin,end);
     }
 }
 
@@ -305,17 +250,17 @@ void read_questions(std::unordered_set<std::string> &set)
         { //find shortest path
             std::string first = line.substr(0, space);
             std::string second = line.substr(space + 1);
-            std::vector<std::string> path = Find_Shortest(first, second, set);
-
+            //std::vector<std::string> path = Find_Shortest(first, second, set);
+            std::vector<std::string> chain = Find_Path(first,second ,set);
             std::cout << first << " " << second << ": ";
-            print_answer(path);
+            print_answer(chain.begin(),chain.end(),chain.size());
         }
         else
         { //find longest path
-            std::vector<std::string> chain = Find_Longest(line, set);
-
+            //std::vector<std::string> chain = Find_Longest(line, set);
+            std::vector<std::string> chain = Find_Path(line,"" ,set);
             std::cout << line << ": ";
-            print_answer(chain);
+            print_answer(std::make_reverse_iterator(chain.end()),std::make_reverse_iterator(chain.begin()),chain.size());
         }
     }
 }
