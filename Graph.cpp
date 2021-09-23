@@ -10,7 +10,7 @@ struct Graph
 {
     struct Node
     {
-      
+
         Node(const std::string &s) : value{s}, Adj_List{}, weight{1}, distance{-1}, prev{nullptr}, visited{false} {}
         Node(const Node &);
         Node operator=(const Node &);
@@ -33,12 +33,12 @@ struct Graph
 
     std::vector<std::string> Find_Shortest(const std::string &, const std::string &);
     std::vector<std::string> Find_Longest(std::string const &);
-    std::vector<Node*> Dijkstra(std::string const &, std::string const &);
-    std::vector<Node*> BFS(std::string const &);
+    std::vector<Node *> Dijkstra(std::string const &, std::string const &);
+    std::vector<Node *> BFS(std::string const &);
     void ISS(const std::string &);
     Node *find(std::string const &);
     std::vector<Node *> Node_List;
-    void insert(const std::string &;
+    void insert(const std::string &);
 };
 
 void Graph::ISS(std::string const &first)
@@ -85,8 +85,7 @@ bool distance_comparison(Graph::Node *a, Graph::Node *b)
 
 std::vector<Graph::Node *> Graph::Dijkstra(std::string const &from, std::string const &to)
 {
-    auto lambda = [](Node *a, Node *b)
-    { return a->distance > b->distance; };
+    auto lambda = [](Node *a, Node *b){ return a->distance > b->distance; };
     std::priority_queue<Node *, std::vector<Node *>, decltype(lambda)> queue(lambda);
     std::vector<Node *> path{};
     queue.push(find(from));
@@ -120,11 +119,42 @@ std::vector<Graph::Node *> Graph::Dijkstra(std::string const &from, std::string 
     return path;
 }
 
+//unordered_set<std::string>
+
 std::vector<Graph::Node *> Graph::BFS(std::string const &from)
 {
-    ISS(from);
-    
+    std::queue<Node *> queue{};
+    Node *last{nullptr};
+    Node *start{find(from)};
+    queue.push(start);
+    start->visited = true;
+    Node *current{nullptr};
+    while (!queue.empty())
+    {
+        current = queue.front();
+        last = current;
+        queue.pop();
+        for (auto &&i : current->Adj_List)
+        {
+            if (!i->visited)
+            {
+                queue.push(i);
+                i->distance = current->distance + 1;
+                i->prev = current;
+                i->visited = true;
+            }
+        }
+    }
+    std::vector<Node *> path{};
+    path.push_back(last);
+    while (last->prev != nullptr)
+    {
+        path.push_back(last->prev);
+        last = last->prev;
+    }
+    return path;
 }
+
 
 std::vector<std::string> Graph::Find_Shortest(const std::string &from, const std::string &to)
 {
@@ -138,9 +168,16 @@ std::vector<std::string> Graph::Find_Shortest(const std::string &from, const std
     return wordChain;
 }
 
-std::vector<std::string> Graph::Find_Longest(std::string const & a)
+std::vector<std::string> Graph::Find_Longest(std::string const &from)
 {
-    std::cout << "Implementera denna " << std::endl;
+    ISS(from);
+    std::vector<Graph::Node *> path = BFS(from);
+    std::vector<std::string> wordChain{};
+    for (auto &&i : path)
+    {
+        wordChain.push_back(i->value);
+    }
+    return wordChain;
 }
 
 void Graph::insert(const std::string &valuep)
@@ -169,30 +206,16 @@ void Graph::insert(const std::string &valuep)
  * Läs in ordlistan och returnera den som en vector av orden. Funktionen läser även bort raden med
  * #-tecknet så att resterande kod inte behöver hantera det.
  */
-void read_file(Graph &graph)
+void read_dictionary(Graph & graph)
 {
     std::string line;
-    while (std::getline(std::cin, line))
-    {
-        if (line == "#")
-            break;
-        graph.insert(line);
-    }
-}
-Graph read_dictionary()
-{
-    std::string line;
-    //std::vector<std::string> result;
-    Graph Temp{};
     while (std::getline(std::cin, line))
     {
         if (line == "#")
             break;
 
-        Temp.insert(line);
+        graph.insert(line);
     }
-    return Temp;
-    //return std::vector<std::string>(result.begin(), result.end());
 }
 
 /**
@@ -260,7 +283,9 @@ void read_questions(Graph &graph)
 int main()
 {
     //std::vector<std::string> dict = read_dictionary();
-    Graph graph = read_dictionary();
+    Graph graph{};
+    read_dictionary(graph);
+    std::cout << "Grafen e klar" << std::endl;
     //read_questions(dict);
     read_questions(graph);
     return 0;
