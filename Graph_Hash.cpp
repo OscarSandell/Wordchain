@@ -2,12 +2,13 @@
 #include <string>
 #include <vector>
 #include <queue>
-#include <algorithm>
-#include <stack>
+//#include <algorithm>
+//#include <stack>
 #include <iterator>
 #include <unordered_set>
 #include <unordered_map>
 
+/*
 //Denna funkar,
 
 std::vector<std::string> Find_Shortest(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
@@ -100,7 +101,7 @@ std::vector<std::string> Find_Longest(std::string const &from, std::unordered_se
     }
     path.push_back(last);
     return path;
-}
+}*/
 
 //om to = "" är detta Longest_Path, är det ett ord är det shortest_path
 std::vector<std::string> Find_Path(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
