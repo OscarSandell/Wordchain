@@ -102,6 +102,7 @@ std::vector<std::string> Find_Longest(std::string const &from, std::unordered_se
     return path;
 }
 
+//om to = "" är detta Longest_Path, är det ett ord är det shortest_path
 std::vector<std::string> Find_Path(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
 {
     std::unordered_map<std::string, std::string> visited{};
@@ -159,10 +160,8 @@ std::vector<std::string> Find_Path(std::string const &from, std::string const &t
             temp = current;
         }
     }
-
     if (to == "")
     {
-        std::cout << "Letat igenom alla noder" << std::endl;
         while (last != from)
         {
             path.push_back(last);
@@ -194,18 +193,12 @@ void read_dictionary(std::unordered_set<std::string> &set)
  * Skriv ut en ordkedja på en rad.
  */
 template <typename iterator>
-//void print_chain(const std::vector<std::string> &chain)
 void print_chain(iterator begin, iterator end)
 {
-    //if (chain.empty())
     if (begin == end)
         return;
 
-    // std::vector<std::string>::const_iterator i = chain.begin();
-    //std::cout << *i;
     std::cout << *begin;
-    //for (++i; i != chain.end(); ++i)
-    //   std::cout << " -> " << *i;
     for (++begin; begin != end; ++begin)
         std::cout << " -> " << *begin;
 
@@ -216,20 +209,15 @@ void print_chain(iterator begin, iterator end)
  * Skriv ut ": X ord" och sedan en ordkedja om det behövs. Om ordkedjan är tom, skriv "ingen lösning".
  */
 template <typename iterator>
-//void print_answer(const std::vector<std::string> &chain)
 void print_answer(iterator begin, iterator end, size_t i)
-
 {
-    //f (chain.empty())
     if (begin == end)
     {
         std::cout << "ingen lösning" << std::endl;
     }
     else
     {
-        //std::cout << chain.size() << " ord" << std::endl;
         std::cout << i << " ord" << std::endl;
-        //print_chain(chain);
         print_chain(begin, end);
     }
 }
@@ -248,19 +236,15 @@ void read_questions(std::unordered_set<std::string> &set)
         { //find shortest path
             std::string first = line.substr(0, space);
             std::string second = line.substr(space + 1);
-            //std::vector<std::string> path = Find_Shortest(first, second, set);
             std::vector<std::string> chain = Find_Path(first, second, set);
             std::cout << first << " " << second << ": ";
-            //print_answer(chain.begin(),chain.end(),chain.size());
             print_answer(std::make_reverse_iterator(chain.end()), std::make_reverse_iterator(chain.begin()), chain.size());
         }
 
         else
         { //find longest path
-            //std::vector<std::string> chain = Find_Longest(line, set);
             std::vector<std::string> chain = Find_Path(line, "", set);
             std::cout << line << ": ";
-            //print_answer(std::make_reverse_iterator(chain.end()),std::make_reverse_iterator(chain.begin()),chain.size());
             print_answer(chain.begin(), chain.end(), chain.size());
         }
     }
@@ -268,11 +252,8 @@ void read_questions(std::unordered_set<std::string> &set)
 
 int main()
 {
-    //std::vector<std::string> dict = read_dictionary();
     std::unordered_set<std::string> set{};
     read_dictionary(set);
-    //std::cout << "Grafen e klar" << std::endl;
-    //read_questions(dict);
     read_questions(set);
     return 0;
 }
