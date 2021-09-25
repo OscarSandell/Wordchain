@@ -2,106 +2,9 @@
 #include <string>
 #include <vector>
 #include <queue>
-//#include <algorithm>
-//#include <stack>
 #include <iterator>
 #include <unordered_set>
 #include <unordered_map>
-
-/*
-//Denna funkar,
-
-std::vector<std::string> Find_Shortest(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
-{
-    std::unordered_map<std::string, std::string> visited{};
-    std::queue<std::string> queue{};
-    queue.push(from);
-    std::vector<std::string> path{};
-    visited[from] = "";
-    while (!queue.empty())
-    {
-        std::string current{queue.front()};
-        queue.pop();
-        std::string temp{current};
-        for (auto &&i : temp)
-        {
-            for (i = 'a'; i < 'z' + 1; ++i)
-            {
-                if (temp != current)
-                {
-                    auto goal = visited.find(temp);
-                    if (goal == visited.end())
-                    {
-                        auto it = set.find(temp);
-                        if (it != set.end())
-                        {
-                            visited[temp] = current;
-                            if (temp == to)
-                            {
-                                while (temp != from)
-                                {
-                                    path.push_back(temp);
-                                    temp = visited[temp];
-                                }
-                                path.push_back(temp);
-                                return path;
-                            }
-                            queue.push(temp);
-                        }
-                    }
-                }
-            }
-            temp = current;
-        }
-    }
-    return path;
-}
-
-std::vector<std::string> Find_Longest(std::string const &from, std::unordered_set<std::string> &set)
-{
-    std::unordered_map<std::string, std::string> visited{};
-    std::queue<std::string> queue{};
-    queue.push(from);
-    std::vector<std::string> path{};
-    visited[from] = "";
-    std::string last{};
-    while (!queue.empty())
-    {
-        std::string current{queue.front()};
-        queue.pop();
-        last = current;
-        std::string temp{current};
-        for (auto &i : temp)
-        {
-            for (i = 'a'; i < 'z' + 1; ++i)
-            {
-                if (temp != current)
-                {
-                    auto goal = visited.find(temp);
-                    if (goal == visited.end())
-                    {
-                        auto it = set.find(temp);
-                        if (it != set.end())
-                        {
-                            visited[temp] = current;
-                            queue.push(temp);
-                        }
-                    }
-                }
-            }
-            temp = current;
-        }
-    }
-
-    std::cout << "Letat igenom alla noder" << std::endl;
-    while (last != from)
-    {
-        path.push_back(last);
-        last = visited[last];
-    }
-    path.push_back(last);
-    return path;
-}*/
 
 //om to = "" är detta Longest_Path, är det ett ord är det shortest_path
 std::vector<std::string> Find_Path(std::string const &from, std::string const &to, std::unordered_set<std::string> &set)
@@ -145,17 +48,6 @@ std::vector<std::string> Find_Path(std::string const &from, std::string const &t
                             queue.push(temp);
                         }
                     }
-                    /*auto goal = visited.find(temp);
-                    if (goal == visited.end())
-                    {
-                        auto it = set.find(temp);
-                        if (it != set.end())
-                        {
-                            visited[temp] = current;
-                            
-                            queue.push(temp);
-                        }
-                    }*/
                 }
             }
             temp = current;
